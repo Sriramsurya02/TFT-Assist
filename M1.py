@@ -13,14 +13,16 @@ file_path = "Top Comps.txt"
 
 
 subprocess.Popen(["notepad.exe", file_path])
-# Start browser
+
+# Start Browser
 driver = webdriver.Chrome()
 
 wait = WebDriverWait(driver, 10)
-# Open website
+
 driver.get("https://tactics.tools")
 time.sleep(random.uniform(0.5, 1.5))
-# Find input field and type
+
+# Navigate to STATS page
 STATS = wait.until(
     EC.element_to_be_clickable((By.LINK_TEXT, 'STATS'))
 )
@@ -29,7 +31,7 @@ STATS.click()
 codes = []
 wait = WebDriverWait(driver, 10)
 
-# Wait until at least one button exists
+# Find all comps and the team planner code
 wait.until(
     EC.presence_of_element_located(
         (By.CSS_SELECTOR, "button[aria-label='Copy Team Planner code']")
@@ -41,7 +43,8 @@ Comps = driver.find_elements(
 )
 
 Used_Codes = set()
-
+# Scroll and click on each comp to copy the code, then save it to a list
+# If the alert pops up, wait for the user to click it before resuming the script
 while True:
     Comps = driver.find_elements(By.CSS_SELECTOR, "button[aria-label='Copy Team Planner code']")
     new_comp = False
@@ -68,7 +71,7 @@ while True:
             while True:
                 time.sleep(1)
                 try:
-                    alert.text  # Check if alert is still present
+                    alert.text  
                 except Exception:
                     print("Alert closed, Resuming")
                     break
@@ -77,7 +80,7 @@ while True:
         
 
        
-        time.sleep(random.uniform(0.5, 1.5))  # Wait for clipboard update
+        time.sleep(random.uniform(0.5, 1.5))  
 
         code = pyperclip.paste()
         codes.append(code)
@@ -88,6 +91,7 @@ while True:
     driver.execute_script("window.scrollBy(0, 500);")
     time.sleep(random.uniform(0.5, 1.5))
 
+# Write codes to file
 with open(file_path, "w") as f:
     for code in codes:
         f.write(code + "\n")
